@@ -1,6 +1,27 @@
 import { useEffect, useState } from "react";
+const [token, setToken] = useState(null);
+const [username, setUsername] =  useState("");
+const [password, setPassword] = useState("");
 
-function App() {
+
+async function App() {
+  const login = async () => {
+    const res = await fetch("http://10.48.41.126:8000/api/token/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ username: username, password: password })
+    })
+  }
+  const data = await res.json()
+  if (data.access) {
+    setToken(data.access);
+    localStorage.setItem("token", data.access);
+
+  } else {
+    alert("login failed")
+  }
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
@@ -11,15 +32,22 @@ function App() {
 
   return (
     <div>
-      <h1>DevConnect Feed</h1>
+    <h2>Login</h2>
 
-      {posts.map(post => (
-        <div key={post.id}>
-          <p>{post.content}</p>
-        </div>
-      ))}
-    </div>
-  );
+    <input
+      placeholder="Username"
+      onChange={(e) => setUsername(e.target.value)}
+    />
+
+    <input
+      placeholder="Password"
+      type="password"
+      onChange={(e) => setPassword(e.target.value)}
+    />
+
+    <button onClick={login}>Login</button>
+  </div>
+)
 }
 
 export default App;
