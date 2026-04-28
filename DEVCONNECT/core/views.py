@@ -6,8 +6,14 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 # Create your views here.
 
+@api_view(["GET"])
+def get_posts(request):
+    posts = Post.objects.all().order_by("-created_at")
+    serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data)
+
 @api_view(["POST"])
-def posts(request):
+def create_post(request):
     serializer = PostSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save(user=request.user)
